@@ -1,7 +1,7 @@
 ---
 name: echarts-html-report
 description: 创建基于 ECharts 的单文件交互式 HTML 数据分析报告。包含图表类型选择指南、饼图标签防重叠方案、NPS展示模板、配色方案、CSS tooltip 组件等最佳实践。当用户要求制作数据分析报告、可视化报告、交互式图表、ECharts 报告时使用。
-version: 1.0.0
+version: 1.1.0
 ---
 
 # ECharts 交互式 HTML 数据报告
@@ -59,6 +59,12 @@ body {
 .chart-row .chart-half { flex: 1; min-height: 380px; }
 .insight-box { background: #f7fafc; border-left: 3px solid #2b6cb0; padding: 14px 18px; margin-top: 16px; border-radius: 0 8px 8px 0; font-size: 14px; color: #444; }
 .insight-box strong { color: #1a365d; }
+.tag-cloud { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.tag-cloud .tag { background: #edf2f7; color: #2d3748; padding: 6px 14px; border-radius: 20px; font-size: 13px; }
+.tag-cloud .tag.hot { background: #ebf4ff; color: #2b6cb0; font-weight: 600; }
+.summary-list { padding: 0 16px; }
+.summary-list li { margin-bottom: 12px; font-size: 15px; line-height: 1.8; }
+.footer { text-align: center; padding: 32px 0; color: #999; font-size: 13px; }
 @media (max-width: 768px) { .stats-bar { flex-direction: column; } .chart-row { flex-direction: column; } }
 ```
 
@@ -233,7 +239,80 @@ NPS = 推荐者占比 − 贬损者占比 = 68.0 − 1.0 = <strong>67</strong>
 - 每个 section 末尾用 insight-box 总结核心发现
 - 最后一个 section 放调研总结（summary-list）
 
-## 八、常见陷阱
+### 标签云组件（开放题高频主题展示）
+
+适用场景：开放题/填空题的高频关键词/主题可视化。
+
+```html
+<div class="tag-cloud">
+    <span class="tag hot">最热主题1</span>
+    <span class="tag hot">最热主题2</span>
+    <span class="tag">次要主题1</span>
+    <span class="tag">次要主题2</span>
+    <span class="tag">其他主题</span>
+</div>
+```
+
+- `.tag.hot` 用于出现频率最高的 2-4 个主题，蓝色高亮
+- `.tag` 用于其他普通主题，灰色底
+
+### 开放题典型反馈摘录模板
+
+```html
+<div class="section">
+    <h2 class="section-title">十二、机构开放式建议摘要</h2>
+    <div class="section-desc">部分机构在问卷末尾提出的建议和诉求（共收到 N 条有效反馈）</div>
+    <p style="font-size:14px;color:#555;margin-bottom:16px;">以下为出现频率较高的核心诉求主题：</p>
+    <div class="tag-cloud">
+        <span class="tag hot">主题1</span>
+        <span class="tag hot">主题2</span>
+        <span class="tag">主题3</span>
+        <!-- ... -->
+    </div>
+    <div style="margin-top:20px;">
+        <p style="font-size:14px;color:#555;margin-bottom:8px;font-weight:600;">典型反馈摘录：</p>
+        <div class="insight-box" style="margin-top:8px;">"第一条摘录原文。"</div>
+        <div class="insight-box">"第二条摘录原文。"</div>
+        <div class="insight-box">"第三条摘录原文。"</div>
+    </div>
+</div>
+```
+
+### 调研总结模块模板
+
+```html
+<div class="section">
+    <h2 class="section-title">调研总结</h2>
+    <ul class="summary-list">
+        <li><strong>行业结构：</strong>总结行业基本面的1-2句关键发现。</li>
+        <li><strong>经营状况：</strong>总结经营压力的1-2句关键发现。</li>
+        <li><strong>投入策略：</strong>总结投入方向的1-2句关键发现。</li>
+        <li><strong>合规情况：</strong>总结合规管理的1-2句关键发现。</li>
+        <li><strong>政策态度：</strong>总结政策评价的1-2句关键发现。</li>
+        <li><strong>核心诉求：</strong>总结诉求期待的1-2句关键发现。</li>
+    </ul>
+</div>
+```
+
+## 八、报告必含元素清单（生成前自检）
+
+每份 HTML 报告**必须**包含以下所有元素：
+
+| 序号 | 元素 | 说明 |
+|------|------|------|
+| ✅ header | 渐变色标题区，含主标题 + 副标题（数据来源+日期） |
+| ✅ stats-bar | 3-4 个核心指标概览卡片 |
+| ✅ section × N | 每个分析题目一个 section，含 section-title + section-desc + chart + insight-box |
+| ✅ insight-box | **每个** section 末尾的"核心发现"文字总结，不可省略 |
+| ✅ chart-row | 相关题目用 chart-row 左右并排（如 H1+H2，I2+I3） |
+| ✅ section-desc | 每节的题目描述文字，尽量写完整的问卷题干 |
+| ✅ 开放题模块 | 如有开放题（Q15 等），需展示标签云 + 典型摘录 |
+| ✅ 调研总结 | 最后一个 section，用 summary-list 总结全报告关键发现 |
+| ✅ footer | 页脚，含报告名称 + 日期 + 样本量 |
+| ✅ JS resize | 所有图表通过 initChart 绑定 resize 事件 |
+| ✅ 响应式 | CSS 中配置 @media (max-width: 768px) 移动端适配 |
+
+## 九、常见陷阱
 
 - **饼图标签与图例重叠**：根因是右侧垂直图例与右侧标签空间冲突 → 改用底部水平图例，饼图居中
 - **标签默认隐藏**：`label: { show: false }` 导致默认状态无标签 → 必须 `show: true`
@@ -241,3 +320,5 @@ NPS = 推荐者占比 − 贬损者占比 = 68.0 − 1.0 = <strong>67</strong>
 - **tooltip 被遮挡**：`position: absolute` 未设 z-index → 加 `z-index: 100`
 - **图表不响应窗口变化**：忘记绑定 `resize` 事件 → 用 initChart 统一处理
 - **柱状图标签被截断**：`grid.right` 太小 → 留足 60-80px 给右侧标签
+- **全部图表空白（最严重）**：用 Python f-string 生成 HTML 时，`formatter: '{b}\n{d}%'` 中的 `\n` 会被 Python 处理成**真实换行符**，导致 JS 单引号字符串跨行 → `SyntaxError` → 所有图表渲染失败。**修复**：Python 侧必须用 `\\n`（例如 `label: {{ show: true, formatter: '{{b}}\\n{{d}}%' }}`），确保输出到 HTML 的 JS 代码中是 `\n` 两个字符而非真实换行
+- **报告缺少总结性文字**：仅有图表没有 insight-box 和调研总结会导致报告"只有图没有结论"。必须：①每个 section 末尾加 insight-box 写一段核心发现；②最后一个 section 放调研总结（summary-list）用文字提炼全局关键发现；③若有开放题，必须加标签云 + 典型摘录模块
